@@ -31,49 +31,39 @@ int main() {
     std::cout << "5- Rehberi görüntüle" << std::endl;
     std::getline(std::cin, option);
 
-if (option == "1") {
+    if (option == "1") {
+        std::cout << "name:";
+        std::getline(std::cin, name);
+        std::cout << "surname:";
+        std::getline(std::cin, surname);
+        std::cout << "number:";
+        std::getline(std::cin, phone);
+        std::cout << "mail:";
+        std::getline(std::cin, mail);
 
-    std::cout << "name:";
-    std::getline(std::cin , name);
-    std::cout << "surname:";
-    std::getline(std::cin , surname);
-    std::cout << "number:";
-    std::getline(std::cin , phone);
-    std::cout << "mail:";
-    std::getline(std::cin , mail);
+        Person person(row, name, surname, phone, mail);
 
-    Person person(row, name, surname, phone, mail);
-
-
-    try {
+        try {
             phonebookService.addPersonToPhonebook(row, name, surname, phone, mail);
             std::cout << "Kişi başarıyla kaydedildi." << std::endl;
+        } catch (const mongocxx::exception &e) {
+            std::cerr << "Hata " << e.what() << std::endl;
         }
-
-    catch (const mongocxx::exception& e) {
-
-        std::cerr << "Veritabanı hatası: " << e.what() << std::endl;
     }
-}
-
     else if (option == "2") {
         std::cout << "İsim:";
-        std::getline(std::cin , name);
+        std::getline(std::cin, name);
         phonebookService.listPersonsByName(name);
-
-        }
-
-    /*else if (option == "3") {
-
+    }
+    else if (option == "3") {
+        std::cout << "İsim: ";
+        std::getline(std::cin, name);
         phonebookService.listPersonsByName(name);
 
         try {
             std::cout << "Güncellemek istediğiniz kişinin sıra numarasını girin: ";
             std::cin >> row;
             std::cin.ignore();
-
-            auto person = service.findPersonsByRow(row);
-            service.print_info(person);
 
             std::string newName, newSurname, newPhone, newMail;
             std::cout << "Yeni isim: ";
@@ -85,39 +75,34 @@ if (option == "1") {
             std::cout << "Yeni mail: ";
             std::getline(std::cin, newMail);
 
-            if (!newName.empty()) person.name = newName;
-            if (!newSurname.empty()) person.surname = newSurname;
-            if (!newPhone.empty()) person.phone = newPhone;
-            if (!newMail.empty()) person.mail = newMail;
+            if (!newName.empty()) name = newName;
+            if (!newSurname.empty()) surname = newSurname;
+            if (!newPhone.empty()) phone = newPhone;
+            if (!newMail.empty()) mail = newMail;
 
-            service.updatePerson(person, row);
+            phonebookService.addPersonToPhonebook(row, name, surname, phone, newMail);
 
             std::cout << "Kişi başarıyla güncellendi." << std::endl;
-            person.print_info();
-
-        } catch (const std::exception& e) {
-            std::cerr << "Hata: " << e.what() << std::endl;
+        } catch (const std::exception &e) {
+            std::cerr << "Hata " << e.what() << std::endl;
         }
-
-
-    }*/
-
+    }
     else if (option == "4") {
+        std::cout << "İsim: ";
+        std::getline(std::cin, name);
+        phonebookService.listPersonsByName(name);
+
         try {
-            service.findPersonsByName(name);
             std::cout << "Silmek istediğiniz kişinin sıra numarasını girin: ";
             std::cin >> row;
 
-            service.removePerson(row);
+            phonebookService.deletePerson(row);
             std::cout << "Kişi başarıyla silindi." << std::endl;
-        } catch (const std::exception& e) {
-            std::cerr << "Hata: " << e.what() << std::endl;
+        } catch (const std::exception &e) {
+            std::cerr << "Hata " << e.what() << std::endl;
         }
     }
-
     else if (option == "5") {
-        repository.listAll();
+        phonebookService.listAllPersons();
     }
-
-
 }

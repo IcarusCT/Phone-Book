@@ -13,9 +13,8 @@
 
 
 class PersonFactory {
-
-    static Person createPerson(const int row, const std::string& name, const std::string& surname, const std::string& phone, const std::string& mail) {
-
+    static Person createPerson(const int row, const std::string &name, const std::string &surname,
+                               const std::string &phone, const std::string &mail) {
         Person person(row, name, surname, phone, mail);
 
         return person;

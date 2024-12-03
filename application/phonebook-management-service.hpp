@@ -12,22 +12,33 @@
 #include "person/person-repository.hpp"
 
 class PhonebookManagementService {
-    PersonService& personService;
-
+    PersonService &personService;
 
 public:
-    PhonebookManagementService(PersonService& service) : personService(service) {}
+    PhonebookManagementService(PersonService &service) : personService(service) {
+    }
 
-    void addPersonToPhonebook(int row, const std::string& name, const std::string& surname, const std::string& phone, const std::string& mail) {
+    void addPersonToPhonebook(int row, const std::string &name, const std::string &surname, const std::string &phone,
+                              const std::string &mail) {
         personService.addPerson(row, name, surname, phone, mail);
     }
 
     std::vector<Person> listPersonsByName(const std::string &name) {
         return personService.findPersonsByName(name);
+    }
 
+    void listAllPersons() {
+        return personService.listALl();
+    }
+
+    void updatePerson(int row, const std::string &name, const std::string &surname, const std::string &phone,
+                      const std::string &mail) {
+        personService.updatePerson(row, name, surname, phone, mail);
+    }
+
+    void deletePerson(const int row) {
+        return personService.removePerson(row);
     }
 };
 
 #endif // PHONEBOOK_MANAGEMENT_SERVICE_HPP
-
-
