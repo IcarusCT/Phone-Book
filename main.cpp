@@ -11,6 +11,16 @@
 #include "phonebook-management-service.hpp"
 
 
+void print_info(const Person &person){
+    std::cout << "Row: " << person.row << std::endl;
+    std::cout << "Name: " << person.name << std::endl;
+    std::cout << "Surname: " << person.surname << std::endl;
+    std::cout << "Phone: " << person.phone << std::endl;
+    std::cout << "Mail: " << person.mail << std::endl;
+    std::cout << "------------------------------" << std::endl;
+
+}
+
 int main() {
     PersonRepository repository;
     PersonService service(repository);
@@ -22,6 +32,7 @@ int main() {
 
     auto db = client["phonebook"];
     auto collection = db["contacts"];
+
 
     std::cout << "Yapmak istediğiniz işlemi seçin: " << std::endl;
     std::cout << "1- Kişi ekle" << std::endl;
@@ -53,12 +64,20 @@ int main() {
     else if (option == "2") {
         std::cout << "İsim:";
         std::getline(std::cin, name);
-        phonebookService.listPersonsByName(name);
+        auto persons = phonebookService.listPersonsByName(name);
+        for (const auto &person : persons) {
+            print_info(person);
+        }
+
     }
     else if (option == "3") {
         std::cout << "İsim: ";
         std::getline(std::cin, name);
-        phonebookService.listPersonsByName(name);
+        auto persons = phonebookService.listPersonsByName(name);
+        for (const auto &person : persons) {
+            print_info(person);
+        }
+
 
         try {
             std::cout << "Güncellemek istediğiniz kişinin sıra numarasını girin: ";
@@ -90,7 +109,10 @@ int main() {
     else if (option == "4") {
         std::cout << "İsim: ";
         std::getline(std::cin, name);
-        phonebookService.listPersonsByName(name);
+        auto persons = phonebookService.listPersonsByName(name);
+        for (const auto &person : persons) {
+            print_info(person);
+        }
 
         try {
             std::cout << "Silmek istediğiniz kişinin sıra numarasını girin: ";
@@ -103,6 +125,10 @@ int main() {
         }
     }
     else if (option == "5") {
-        phonebookService.listAllPersons();
+        auto persons = phonebookService.listAllPersons();
+        for (const auto &person : persons) {
+            print_info(person);
+        }
     }
+
 }

@@ -27,13 +27,14 @@ public:
         return personService.findPersonsByName(name);
     }
 
-    void listAllPersons() {
+    std::vector<Person> listAllPersons() {
         return personService.listALl();
     }
 
-    void updatePerson(int row, const std::string &name, const std::string &surname, const std::string &phone,
+    std::vector<Person> updatePerson(int row, const std::string &name, const std::string &surname, const std::string &phone,
                       const std::string &mail) {
         personService.updatePerson(row, name, surname, phone, mail);
+        return personService.listALl();
     }
 
     void deletePerson(const int row) {

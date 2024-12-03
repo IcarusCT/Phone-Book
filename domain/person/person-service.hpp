@@ -12,14 +12,6 @@ public:
     explicit PersonService(PersonRepository &repository) : personRepository(repository) {
     }
 
-    static void print_info(const Person &person) {
-        std::cout << "Row: " << person.row << std::endl;
-        std::cout << "Name: " << person.name << std::endl;
-        std::cout << "Surname: " << person.surname << std::endl;
-        std::cout << "Phone: " << person.phone << std::endl;
-        std::cout << "Mail: " << person.mail << std::endl;
-        std::cout << "------------------------------" << std::endl;
-    }
 
     void addPerson(const int row, const std::string &name, const std::string &surname, const std::string &phone,
                    const std::string &mail) {
@@ -38,32 +30,22 @@ public:
     }
 
     std::vector<Person> findPersonsByName(const std::string &name) {
-        try {
             auto persons = personRepository.findPersonsByName(name);
 
             if (persons.empty()) {
                 std::cout << "Bu isimle eşleşen kişi bulunamadı." << std::endl;
-            } else {
-                for (const auto &person: persons) {
-                    print_info(person);
-                }
             }
             return (persons);
-        } catch (const std::exception &e) {
-            std::cerr << "Hata: " << e.what() << std::endl;
-        }
     }
 
-    void findPersonsByRow(const int row) {
-        personRepository.findByRow(row);
+    Person findPersonsByRow(const int row) {
+        return personRepository.findByRow(row);
     }
 
 
-    void listALl() {
+    std::vector<Person> listALl() {
         std::vector<Person> persons = personRepository.listAll();
-        for (const auto &person: persons) {
-            print_info(person);
-        }
+        return persons;
     }
 };
 
