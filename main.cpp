@@ -22,6 +22,8 @@ void print_info(const Person &person){
 }
 
 int main() {
+
+
     PersonRepository repository;
     PersonService service(repository);
     PhonebookManagementService phonebookService(service);
@@ -57,6 +59,7 @@ int main() {
         try {
             phonebookService.addPersonToPhonebook(row, name, surname, phone, mail);
             std::cout << "Kişi başarıyla kaydedildi." << std::endl;
+
         } catch (const mongocxx::exception &e) {
             std::cerr << "Hata " << e.what() << std::endl;
         }

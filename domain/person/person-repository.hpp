@@ -7,9 +7,10 @@
 #include <mongocxx/client.hpp>
 #include <mongocxx/collection.hpp>
 #include "person/person.hpp"
-
+#include "person/person-factory.hpp""
 
 class PersonRepository {
+    PersonFactory factory;
 public:
     PersonRepository()
         : client(mongocxx::uri{}),
@@ -46,13 +47,15 @@ public:
                 bsoncxx::builder::basic::kvp("row", row)),
             bsoncxx::builder::basic::make_document(
                 bsoncxx::builder::basic::kvp("$set", bsoncxx::builder::basic::make_document(
-                                                 bsoncxx::builder::basic::kvp("name", updated_person.name),
-                                                 bsoncxx::builder::basic::kvp("surname", updated_person.surname),
-                                                 bsoncxx::builder::basic::kvp("phone", updated_person.phone),
-                                                 bsoncxx::builder::basic::kvp("mail", updated_person.mail))
+                     bsoncxx::builder::basic::kvp("name", updated_person.name),
+                     bsoncxx::builder::basic::kvp("surname", updated_person.surname),
+                     bsoncxx::builder::basic::kvp("phone", updated_person.phone),
+                     bsoncxx::builder::basic::kvp("mail", updated_person.mail))
+
                 )
             )
         );
+        Person updatedPerson = PersonFactory::createPerson(row, updated_person.name, updated_person.surname, updated_person.phone, updated_person.mail);
     }
 
 
@@ -83,13 +86,13 @@ public:
 
         for (auto &&doc: cursor) {
             Person person;
-            if (doc["row"]) person.row = doc["row"].get_int32().value;
-            if (doc["name"]) person.name = doc["name"].get_string().value.data();
-            if (doc["surname"]) person.surname = doc["surname"].get_string().value.data();
-            if (doc["phone"]) person.phone = doc["phone"].get_string().value.data();
-            if (doc["mail"]) person.mail = doc["mail"].get_string().value.data();
+            const int row = doc["row"].get_int32().value;
+            std::string name = doc["name"].get_string().value.data();
+            std::string surname = doc["surname"].get_string().value.data();
+            std::string phone = doc["phone"].get_string().value.data();
+            std::string mail = doc["mail"].get_string().value.data();
 
-            persons.push_back(person);
+            persons.push_back(PersonFactory::createPerson(row, name, surname, phone, mail));
         }
         return persons;
     }
@@ -99,13 +102,13 @@ public:
 
         for (auto &&doc: collection.find({})) {
             Person person;
-            if (doc["row"]) person.row = doc["row"].get_int32().value;
-            if (doc["name"]) person.name = doc["name"].get_string().value.data();
-            if (doc["surname"]) person.surname = doc["surname"].get_string().value.data();
-            if (doc["phone"]) person.phone = doc["phone"].get_string().value.data();
-            if (doc["mail"]) person.mail = doc["mail"].get_string().value.data();
+            const int row = doc["row"].get_int32().value;
+            std::string name = doc["name"].get_string().value.data();
+            std::string surname = doc["surname"].get_string().value.data();
+            std::string phone = doc["phone"].get_string().value.data();
+            std::string mail = doc["mail"].get_string().value.data();
 
-            persons.push_back(person);
+            persons.push_back(PersonFactory::createPerson(row, name, surname, phone, mail));
         }
 
         return persons;
