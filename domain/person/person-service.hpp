@@ -4,26 +4,27 @@
 
 #ifndef PERSON_SERVICE_HPP
 #define PERSON_SERVICE_HPP
-
+#include "person-factory.hpp"
 
 class PersonService {
     PersonRepository &personRepository;
+    PersonFactory &personFactory;
 
 public:
-    explicit PersonService(PersonRepository &repository) : personRepository(repository) {
+    PersonService(PersonRepository& repository, PersonFactory& factory) : personRepository(repository), personFactory(factory) {
     }
 
 
     void addPerson(const std::string &name, const std::string &surname, const std::string &phone,
                    const std::string &mail) {
-        Person person(name, surname, phone, mail);
+        const auto person = personFactory.createDocumentForDB(name, surname, phone, mail);
         personRepository.add(person);
     }
 
     void updatePerson(const std::string &id, const std::string &name, const std::string &surname, const std::string &phone,
                       const std::string &mail) {
-        Person person(name, surname, phone, mail);
-        personRepository.update(id, person);
+        const auto updatedDocument = personFactory.createUpdatedDocumentForDB(id, name, phone, mail);
+        personRepository.update(id, updatedDocument);
     }
 
     void removePerson(const std::string &id) {
@@ -36,8 +37,8 @@ public:
     }
 
     std::vector<Person> listALl() {
-        std::vector<Person> persons = personRepository.listAll();
-        return persons;
+        auto cursor = personRepository.listAll();
+        return cursor;
     }
 };
 

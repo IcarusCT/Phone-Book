@@ -21,6 +21,9 @@ set(DOMAIN_SOURCES
         domain/person/person-repository.hpp
         domain/person/person-service.hpp
         domain/person/person-factory.hpp
+        dto/request/add-person-request.hpp
+        dto/response/search-person-response.hpp
+        dto/dto-assembler.hpp
 )
 
 add_executable(phoneBook1 main.cpp

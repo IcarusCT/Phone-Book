@@ -23,7 +23,8 @@ int main() {
     crow::SimpleApp app;
 
     PersonRepository repository;
-    PersonService service(repository);
+    PersonFactory factory;
+    PersonService service(repository, factory);
     PhonebookManagementService phonebookService(service);
 
     mongocxx::client client{mongocxx::uri{"mongodb://localhost:27017"}};
@@ -59,13 +60,14 @@ int main() {
 
             try {
                 auto person = phonebookService.findPersonsById(id);
+                //alınan data DtoAssembler'a gider, burada SearchPersonResponse oluşur, sonra dönüş yapılır.
                 crow::json::wvalue result;
                 result["name"] = person.name;
                 result["surname"] = person.surname;
                 result["phone"] = person.phone;
                 result["mail"] = person.mail;
                 return crow::response(result);
-            } catch (const std::exception &e) {
+            } catch (const std::exception) {
                 return crow::response(404, "Kişi bulunamadı.");
             }
         });
