@@ -24,6 +24,9 @@ set(DOMAIN_SOURCES
         dto/request/add-person-request.hpp
         dto/response/search-person-response.hpp
         dto/dto-assembler.hpp
+        dto/request/update-person-request.hpp
+        dto/request/delete-person-request.hpp
+        dto/response/list-persons-response.hpp
 )
 
 add_executable(phoneBook1 main.cpp
