@@ -5,6 +5,7 @@
 #ifndef PERSON_SERVICE_HPP
 #define PERSON_SERVICE_HPP
 
+
 class PersonService {
     PersonRepository &personRepository;
 
@@ -13,35 +14,26 @@ public:
     }
 
 
-    void addPerson(const int row, const std::string &name, const std::string &surname, const std::string &phone,
+    void addPerson(const std::string &name, const std::string &surname, const std::string &phone,
                    const std::string &mail) {
-        Person person(row, name, surname, phone, mail);
+        Person person(name, surname, phone, mail);
         personRepository.add(person);
     }
 
-    void updatePerson(int row, const std::string &name, const std::string &surname, const std::string &phone,
+    void updatePerson(const std::string &id, const std::string &name, const std::string &surname, const std::string &phone,
                       const std::string &mail) {
-        Person person(row, name, surname, phone, mail);
-        personRepository.update(row, person);
+        Person person(name, surname, phone, mail);
+        personRepository.update(id, person);
     }
 
-    void removePerson(int row) {
-        personRepository.remove(row);
+    void removePerson(const std::string &id) {
+        personRepository.remove(id);
+
     }
 
-    std::vector<Person> findPersonsByName(const std::string &name) {
-            auto persons = personRepository.findPersonsByName(name);
-
-            if (persons.empty()) {
-                std::cout << "Bu isimle eşleşen kişi bulunamadı." << std::endl;
-            }
-            return (persons);
+    Person findPersonsById(const std::string &id) {
+        return personRepository.findById(id);
     }
-
-    Person findPersonsByRow(const int row) {
-        return personRepository.findByRow(row);
-    }
-
 
     std::vector<Person> listALl() {
         std::vector<Person> persons = personRepository.listAll();

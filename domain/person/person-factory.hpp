@@ -7,10 +7,11 @@
 
 class PersonFactory {
 public:
-    static Person createPerson(const int row, const std::string &name, const std::string &surname,
+    static Person createPerson(const std::string &name, const std::string &surname,
                                const std::string &phone, const std::string &mail) {
-        Person person(row, name, surname, phone, mail);
 
+
+        Person person(name, surname, phone, mail);
         return person;
     }
 };

@@ -6,132 +6,125 @@
 #include "person/person.hpp"
 #include <mongocxx/exception/exception.hpp>
 #include "person/person-service.hpp"
-#include "person/person-factory.hpp"
-#include <bsoncxx/document/value.hpp>
 #include "phonebook-management-service.hpp"
+#include <crow/json.h>
 
 
-void print_info(const Person &person){
-    std::cout << "Row: " << person.row << std::endl;
+void print_info(const Person &person) {
+    std::cout << "ID: " << person._id << std::endl;
     std::cout << "Name: " << person.name << std::endl;
     std::cout << "Surname: " << person.surname << std::endl;
     std::cout << "Phone: " << person.phone << std::endl;
     std::cout << "Mail: " << person.mail << std::endl;
     std::cout << "------------------------------" << std::endl;
-
 }
 
 int main() {
-
+    crow::SimpleApp app;
 
     PersonRepository repository;
     PersonService service(repository);
     PhonebookManagementService phonebookService(service);
-    std::string name, surname, phone, mail, option;
-    int row;
 
     mongocxx::client client{mongocxx::uri{"mongodb://localhost:27017"}};
-
     auto db = client["phonebook"];
     auto collection = db["contacts"];
 
+    CROW_ROUTE(app, "/add_person").methods(crow::HTTPMethod::POST)(
+        [&phonebookService](const crow::request &req) {
+            auto json_data = crow::json::load(req.body);
+            if (!json_data) {
+                return crow::response(400, "Hata");
+            }
 
-    std::cout << "Yapmak istediğiniz işlemi seçin: " << std::endl;
-    std::cout << "1- Kişi ekle" << std::endl;
-    std::cout << "2- Kişi bul" << std::endl;
-    std::cout << "3- Kişi güncelle" << std::endl;
-    std::cout << "4- Kişi sil" << std::endl;
-    std::cout << "5- Rehberi görüntüle" << std::endl;
-    std::getline(std::cin, option);
+            std::string name = json_data["name"].s();
+            std::string surname = json_data["surname"].s();
+            std::string phone = json_data["phone"].s();
+            std::string mail = json_data["mail"].s();
 
-    if (option == "1") {
-        std::cout << "name:";
-        std::getline(std::cin, name);
-        std::cout << "surname:";
-        std::getline(std::cin, surname);
-        std::cout << "number:";
-        std::getline(std::cin, phone);
-        std::cout << "mail:";
-        std::getline(std::cin, mail);
+            try {
+                phonebookService.addPersonToPhonebook(name, surname, phone, mail);
+                return crow::response(200, "Kişi başarıyla oluşturuldu.");
+            } catch (const std::exception &e) {
+                return crow::response(400, e.what());
+            }
+        });
 
-        Person person(row, name, surname, phone, mail);
+    CROW_ROUTE(app, "/search_person").methods(crow::HTTPMethod::GET)(
+        [&phonebookService](const crow::request &req) {
+            auto id = req.url_params.get("id");
+            if (!id) {
+                return crow::response(400, "Id parametresi alınamadı.");
+            }
 
-        try {
-            phonebookService.addPersonToPhonebook(row, name, surname, phone, mail);
-            std::cout << "Kişi başarıyla kaydedildi." << std::endl;
+            try {
+                auto person = phonebookService.findPersonsById(id);
+                crow::json::wvalue result;
+                result["name"] = person.name;
+                result["surname"] = person.surname;
+                result["phone"] = person.phone;
+                result["mail"] = person.mail;
+                return crow::response(result);
+            } catch (const std::exception &e) {
+                return crow::response(404, "Kişi bulunamadı.");
+            }
+        });
 
-        } catch (const mongocxx::exception &e) {
-            std::cerr << "Hata " << e.what() << std::endl;
+    CROW_ROUTE(app, "/update_person/<string>").methods(crow::HTTPMethod::PUT)(
+        [&phonebookService](const crow::request &req, const std::string &id) {
+            auto json_data = crow::json::load(req.body);
+            if (!json_data) {
+                return crow::response(400, "Hata");
+            }
+
+            std::string name = json_data["name"].s();
+            std::string surname = json_data["surname"].s();
+            std::string phone = json_data["phone"].s();
+            std::string mail = json_data["mail"].s();
+
+            try {
+                phonebookService.updatePerson(id, name, surname, phone, mail);
+                return crow::response(200, "Kişi başarıyla güncellendi.");
+            } catch (const std::exception &e) {
+                return crow::response(400, e.what());
+            }
+        });
+
+    CROW_ROUTE(app, "/delete_person").methods(crow::HTTPMethod::DELETE)(
+        [&phonebookService]( const crow::request &req) {
+            auto json_data = crow::json::load(req.body);
+        if (!json_data) {
+            return crow::response(400, "Hata");
         }
-    }
-    else if (option == "2") {
-        std::cout << "İsim:";
-        std::getline(std::cin, name);
-        auto persons = phonebookService.listPersonsByName(name);
-        for (const auto &person : persons) {
-            print_info(person);
-        }
+            std::string id = json_data["id"].s();
+            try {
+                phonebookService.deletePerson(id);
+                return crow::response(200, "Kişi başarıyla silindi.");
+            } catch (const std::exception &e) {
+                return crow::response(400, e.what());
+            }
+        });
 
-    }
-    else if (option == "3") {
-        std::cout << "İsim: ";
-        std::getline(std::cin, name);
-        auto persons = phonebookService.listPersonsByName(name);
-        for (const auto &person : persons) {
-            print_info(person);
-        }
+    CROW_ROUTE(app, "/list_all").methods(crow::HTTPMethod::GET)(
+     [&phonebookService]() {
+         auto persons = phonebookService.listAllPersons();
 
+         crow::json::wvalue result;
+         crow::json::wvalue::list json_array;
 
-        try {
-            std::cout << "Güncellemek istediğiniz kişinin sıra numarasını girin: ";
-            std::cin >> row;
-            std::cin.ignore();
+         for (const auto &person : persons) {
+             crow::json::wvalue person_obj;
+             person_obj["name"] = person.name;
+             person_obj["surname"] = person.surname;
+             person_obj["phone"] = person.phone;
+             person_obj["mail"] = person.mail;
 
-            std::string newName, newSurname, newPhone, newMail;
-            std::cout << "Yeni isim: ";
-            std::getline(std::cin, newName);
-            std::cout << "Yeni soyisim: ";
-            std::getline(std::cin, newSurname);
-            std::cout << "Yeni telefon: ";
-            std::getline(std::cin, newPhone);
-            std::cout << "Yeni mail: ";
-            std::getline(std::cin, newMail);
+             json_array.emplace_back(std::move(person_obj));
+         }
 
-            if (!newName.empty()) name = newName;
-            if (!newSurname.empty()) surname = newSurname;
-            if (!newPhone.empty()) phone = newPhone;
-            if (!newMail.empty()) mail = newMail;
+         result["persons"] = std::move(json_array);
+         return crow::response(std::move(result));
+     });
 
-            phonebookService.addPersonToPhonebook(row, name, surname, phone, newMail);
-
-            std::cout << "Kişi başarıyla güncellendi." << std::endl;
-        } catch (const std::exception &e) {
-            std::cerr << "Hata " << e.what() << std::endl;
-        }
-    }
-    else if (option == "4") {
-        std::cout << "İsim: ";
-        std::getline(std::cin, name);
-        auto persons = phonebookService.listPersonsByName(name);
-        for (const auto &person : persons) {
-            print_info(person);
-        }
-
-        try {
-            std::cout << "Silmek istediğiniz kişinin sıra numarasını girin: ";
-            std::cin >> row;
-
-            phonebookService.deletePerson(row);
-            std::cout << "Kişi başarıyla silindi." << std::endl;
-        } catch (const std::exception &e) {
-            std::cerr << "Hata " << e.what() << std::endl;
-        }
-    }
-    else if (option == "5") {
-        auto persons = phonebookService.listAllPersons();
-        for (const auto &person : persons) {
-            print_info(person);
-        }
-    }
-
+    app.port(8080).multithreaded().run();
 }

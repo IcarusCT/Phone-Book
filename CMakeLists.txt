@@ -10,7 +10,6 @@ set(CMAKE_PREFIX_PATH "/usr/local/include/mongocxx"
 find_package(mongocxx CONFIG REQUIRED)
 find_package(bsoncxx CONFIG REQUIRED)
 
-
 set(APPLICATION_SOURCES
 
         application/phonebook-management-service.hpp
@@ -29,7 +28,7 @@ add_executable(phoneBook1 main.cpp
         ${APPLICATION_SOURCES}
 )
 
-target_link_libraries(phoneBook1 PRIVATE /usr/local/lib/libmongocxx.so /usr/local/lib/libbsoncxx.so)
+target_link_libraries(phoneBook1 PRIVATE /usr/local/lib/libmongocxx.so /usr/local/lib/libbsoncxx.so )
 
 target_include_directories(phoneBook1 PRIVATE
 

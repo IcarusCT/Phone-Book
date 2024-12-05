@@ -18,27 +18,27 @@ public:
     PhonebookManagementService(PersonService &service) : personService(service) {
     }
 
-    void addPersonToPhonebook(int row, const std::string &name, const std::string &surname, const std::string &phone,
+    void addPersonToPhonebook(const std::string &name, const std::string &surname, const std::string &phone,
                               const std::string &mail) {
-        personService.addPerson(row, name, surname, phone, mail);
+        personService.addPerson(name, surname, phone, mail);
     }
 
-    std::vector<Person> listPersonsByName(const std::string &name) {
-        return personService.findPersonsByName(name);
+    Person findPersonsById(const std::string &id) {
+        return personService.findPersonsById(id);
     }
 
     std::vector<Person> listAllPersons() {
         return personService.listALl();
     }
 
-    std::vector<Person> updatePerson(int row, const std::string &name, const std::string &surname, const std::string &phone,
+    std::vector<Person> updatePerson(const std::string &id, const std::string &name, const std::string &surname, const std::string &phone,
                       const std::string &mail) {
-        personService.updatePerson(row, name, surname, phone, mail);
+        personService.updatePerson(id, name, surname, phone, mail);
         return personService.listALl();
     }
 
-    void deletePerson(const int row) {
-        return personService.removePerson(row);
+    void deletePerson(const std::string &id) {
+        return personService.removePerson(id);
     }
 };
 
