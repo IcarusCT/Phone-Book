@@ -1,0 +1,15 @@
+{
+  "name" : "phonebook",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "5e5d0e1cd7785623065e77eff011afdeec1a3574",
+  "dependencies" : [ {
+    "name" : "mongo-cxx-driver",
+    "version>=" : "3.11.0"
+  }, {
+    "name" : "crow",
+    "version>=" : "1.2.0"
+  }, {
+    "name" : "nlohmann-json",
+    "version>=" : "3.11.3#1"
+  } ]
+}

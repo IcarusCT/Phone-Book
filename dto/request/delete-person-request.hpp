@@ -6,25 +6,16 @@
 #define DELETE_PERSON_REQUEST_HPP
 #include <string>
 #include <crow.h>
-
+#include <nlohmann/json.hpp>
 
 class DeletePersonRequest {
 public:
     std::string id;
 
-    DeletePersonRequest(const std::string& id) : id(id) {}
+    DeletePersonRequest() = default;
 
-    static DeletePersonRequest fromJson(const crow::json::rvalue& json) {
-        return DeletePersonRequest(json["id"].s());
-    }
-
-    crow::json::wvalue toJson() const {
-        crow::json::wvalue result;
-        result["id"] = id;
-        return result;
-    }
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(DeletePersonRequest, id);
 };
-
 
 
 #endif //DELETE_PERSON_REQUEST_HPP

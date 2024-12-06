@@ -5,30 +5,20 @@
 #ifndef ADD_PERSON_REQUEST_HPP
 #define ADD_PERSON_REQUEST_HPP
 #include <string>
+#include <nlohmann/json.hpp>
 
 
 class AddPersonRequest {
 public:
-
     std::string name;
     std::string surname;
     std::string phone;
     std::string mail;
 
-    AddPersonRequest(const std::string name, const std::string surname, const std::string phone, const std::string mail)
-        : name(name), surname(surname), phone(phone), mail(mail) {}
+    AddPersonRequest() = default;
 
-    crow::json::wvalue toJson() const {
-        crow::json::wvalue result;
-        result["name"] = name;
-        result["surname"] = surname;
-        result["phone"] = phone;
-        result["mail"] = mail;
-        return result;
-    }
-
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(AddPersonRequest, name, surname, phone, mail)
 };
-
 
 
 #endif //ADD_PERSON_REQUEST_HPP

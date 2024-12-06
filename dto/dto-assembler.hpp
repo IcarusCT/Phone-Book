@@ -15,15 +15,6 @@
 
 class DtoAssembler {
 public:
-    static AddPersonRequest toAddPersonRequest(const crow::json::rvalue &json) {
-        return AddPersonRequest(
-            json["name"].s(),
-            json["surname"].s(),
-            json["phone"].s(),
-            json["mail"].s()
-        );
-    }
-
     static SearchPersonResponse toSearchPersonResponse(const Person &person) {
         return SearchPersonResponse(
             person.name,
@@ -33,24 +24,20 @@ public:
         );
     }
 
-    static UpdatePersonRequest toUpdatePersonRequest(const crow::json::rvalue &json) {
-        return UpdatePersonRequest(
-            json["id"].s(),
-            json["name"].s(),
-            json["surname"].s(),
-            json["phone"].s(),
-            json["mail"].s()
-        );
-    }
-
-    static DeletePersonRequest toDeletePersonRequest(const crow::json::rvalue &json) {
-        return DeletePersonRequest(json["id"].s());
-    }
-
 
     static ListPersonsResponse toListPersonsResponse(const std::vector<Person> &persons) {
-            return ListPersonsResponse(persons);
-
+        std::vector<ListPersonsResponse::Person> result;
+        result.reserve(persons.size());
+        for (const auto &person: persons) {
+            result.emplace_back(ListPersonsResponse::Person{
+                person._id,
+                person.name,
+                person.surname,
+                person.phone,
+                person.mail
+            });
+        }
+        return ListPersonsResponse(result);
     }
 };
 

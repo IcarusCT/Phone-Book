@@ -6,7 +6,7 @@
 #define UPDATE_PERSON_REQUEST_HPP
 #include <string>
 #include <crow.h>
-
+#include <nlohmann/json.hpp>
 
 class UpdatePersonRequest {
 public:
@@ -16,29 +16,9 @@ public:
     std::string phone;
     std::string mail;
 
-    UpdatePersonRequest(const std::string id, const std::string name, const std::string surname, const std::string phone, const std::string mail)
-        : id(id), name(name), surname(surname), phone(phone), mail(mail) {}
+    UpdatePersonRequest() = default;
 
-
-    static UpdatePersonRequest fromJson(const crow::json::rvalue &json) {
-        return UpdatePersonRequest(
-            json["id"].s(),
-            json["name"].s(),
-            json["surname"].s(),
-            json["phone"].s(),
-            json["mail"].s()
-        );
-    }
-
-    crow::json::wvalue toJson() const {
-        crow::json::wvalue result;
-        result["id"] = id;
-        result["name"] = name;
-        result["surname"] = surname;
-        result["phone"] = phone;
-        result["mail"] = mail;
-        return result;
-    }
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(UpdatePersonRequest, id, name, surname, phone, mail);
 };
 
 

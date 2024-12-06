@@ -9,8 +9,12 @@
 #include "phonebook-management-service.hpp"
 #include "dto/dto-assembler.hpp"
 #include "dto/request/add-person-request.hpp"
+#include "dto/response/list-persons-response.hpp"
 #include "dto/response/search-person-response.hpp"
 #include <crow/json.h>
+#include <nlohmann/json.hpp>
+
+using nlohmann::json;
 
 
 void print_info(const Person &person) {
@@ -36,13 +40,8 @@ int main() {
 
     CROW_ROUTE(app, "/add_person").methods(crow::HTTPMethod::POST)(
         [&phonebookService](const crow::request &req) {
-            auto json_data = crow::json::load(req.body);
-            if (!json_data) {
-                return crow::response(400, "Hata");
-            }
-
             try {
-                AddPersonRequest requestDto = DtoAssembler::toAddPersonRequest(json_data);
+                AddPersonRequest requestDto = json::parse(req.body);
 
                 phonebookService.addPersonToPhonebook(
                     requestDto.name,
@@ -59,6 +58,7 @@ int main() {
     CROW_ROUTE(app, "/search_person").methods(crow::HTTPMethod::GET)(
         [&phonebookService](const crow::request &req) {
             auto id = req.url_params.get("id");
+
             if (!id) {
                 return crow::response(400, "Id parametresi alınamadı.");
             }
@@ -66,9 +66,9 @@ int main() {
             try {
                 auto person = phonebookService.findPersonsById(id);
 
-                SearchPersonResponse responseDto = DtoAssembler::toSearchPersonResponse(person);
+                json responseDto = DtoAssembler::toSearchPersonResponse(person);
 
-                return crow::response(responseDto.toJson());
+                return crow::response("application/json", responseDto.dump());
             } catch (const std::exception) {
                 return crow::response(404, "Kişi bulunamadı.");
             }
@@ -81,7 +81,7 @@ int main() {
                 return crow::response(400, "Hata");
             }
             try {
-                UpdatePersonRequest requestDto = DtoAssembler::toUpdatePersonRequest(json_data);
+                UpdatePersonRequest requestDto = json::parse(req.body);
                 phonebookService.updatePerson(
                     requestDto.id,
                     requestDto.name,
@@ -97,15 +97,11 @@ int main() {
 
     CROW_ROUTE(app, "/delete_person").methods(crow::HTTPMethod::DELETE)(
         [&phonebookService](const crow::request &req) {
-            auto json_data = crow::json::load(req.body);
-            if (!json_data) {
-                return crow::response(400, "Hata");
-            }
-            std::string id = json_data["id"].s();
             try {
-                DeletePersonRequest requestDto = DtoAssembler::toDeletePersonRequest(json_data);
+                DeletePersonRequest requestDto = json::parse(req.body);
                 phonebookService.deletePerson(requestDto.id);
-                return crow::response(200, "Kişi başarıyla silindi.");
+
+                return crow::response("application/json", requestDto.id);
             } catch (const std::exception &e) {
                 return crow::response(400, e.what());
             }
@@ -114,9 +110,9 @@ int main() {
     CROW_ROUTE(app, "/list_all").methods(crow::HTTPMethod::GET)(
         [&phonebookService]() {
             auto persons = phonebookService.listAllPersons();
-            ListPersonsResponse response = DtoAssembler::toListPersonsResponse(persons);
+            json responseDto = DtoAssembler::toListPersonsResponse(persons);
 
-            return crow::response(response.toJson());
+            return crow::response("application/json", responseDto.dump());
         });
 
     app.port(8080).multithreaded().run();

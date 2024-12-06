@@ -3,12 +3,13 @@ project(phoneBook)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(CMAKE_PREFIX_PATH "/usr/local/include/mongocxx"
-        "/usr/local/include/bsoncxx")
-
+#[[set(CMAKE_PREFIX_PATH "/usr/local/include/mongocxx"
+        "/usr/local/include/bsoncxx")]]
 
 find_package(mongocxx CONFIG REQUIRED)
 find_package(bsoncxx CONFIG REQUIRED)
+find_package(Crow CONFIG REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 set(APPLICATION_SOURCES
 
@@ -29,20 +30,27 @@ set(DOMAIN_SOURCES
         dto/response/list-persons-response.hpp
 )
 
-add_executable(phoneBook1 main.cpp
+add_executable(${PROJECT_NAME} main.cpp
         ${DOMAIN_SOURCES}
         ${APPLICATION_SOURCES}
 )
 
-target_link_libraries(phoneBook1 PRIVATE /usr/local/lib/libmongocxx.so /usr/local/lib/libbsoncxx.so )
+#[[target_link_libraries(phoneBook1 PRIVATE /usr/local/lib/libmongocxx.so /usr/local/lib/libbsoncxx.so )]]
 
-target_include_directories(phoneBook1 PRIVATE
+target_include_directories(${PROJECT_NAME} PRIVATE
 
-        "/usr/local/include/mongocxx/v_noabi"
+        #[["/usr/local/include/mongocxx/v_noabi"
         "/usr/local/include/bsoncxx/v_noabi"
         "/home/elif/Crow/include"
         "/usr/local/include/nlohmann"
-        "bsoncxx/builder/stream/document.hpp"
+        "bsoncxx/builder/stream/document.hpp"]]
         "${CMAKE_SOURCE_DIR}/domain"
         "${CMAKE_SOURCE_DIR}/application"
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        nlohmann_json::nlohmann_json
+        mongo::bsoncxx_static
+        mongo::mongocxx_static
+        Crow::Crow
 )

@@ -1,0 +1,112 @@
+Package: vcpkg-cmake-config
+Version: 2024-05-23
+Architecture: x64-linux
+Multi-Arch: same
+Abi: b8e43b840b1ce7d8e8f0eb26a26f69058b2485cfb32178a074b91efc53e0654a
+Status: install ok installed
+
+Package: vcpkg-cmake
+Version: 2024-04-23
+Architecture: x64-linux
+Multi-Arch: same
+Abi: 7d2867f925e9bd883a69397d654722c943e7440907ef08925485e373a152892c
+Status: install ok installed
+
+Package: asio
+Version: 1.32.0
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-linux
+Multi-Arch: same
+Abi: 2360bbf2d5474d4b78d15dba02309a1df856eec027cbedc4392a189a2d2d244c
+Description: Asio is a cross-platform C++ library for network and low-level I/O programming that provides developers with a consistent asynchronous model using a modern C++ approach.
+Status: install ok installed
+
+Package: crow
+Version: 1.2.0
+Depends: asio, vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-linux
+Multi-Arch: same
+Abi: c81a376a190249c68176ea5a3aa857904c7cbab7b9338666ee2a2a938bcc4577
+Description: Very fast and easy to use C++ micro web framework
+Status: install ok installed
+
+Package: vcpkg-cmake-get-vars
+Version: 2024-09-22
+Depends: vcpkg-cmake
+Architecture: x64-linux
+Multi-Arch: same
+Abi: 143aae716049cd88d29e914a3549ba50ce5b43574cb51866662a14b24dbe0668
+Status: install ok installed
+
+Package: openssl
+Version: 3.4.0
+Depends: vcpkg-cmake, vcpkg-cmake-config, vcpkg-cmake-get-vars
+Architecture: x64-linux
+Multi-Arch: same
+Abi: 82f1cf77fe6c77e5980e50d8fba2c2cc491470a595887f5e52d71bd305d574ea
+Description: OpenSSL is an open source project that provides a robust, commercial-grade, and full-featured toolkit for the Transport Layer Security (TLS) and Secure Sockets Layer (SSL) protocols. It is also a general-purpose cryptography library.
+Status: install ok installed
+
+Package: zlib
+Version: 1.3.1
+Depends: vcpkg-cmake
+Architecture: x64-linux
+Multi-Arch: same
+Abi: 0304d8e13e2a7e976d99d09e5c271c834c72ac3562bf6e8790e93fb09294b310
+Description: A compression library
+Status: install ok installed
+
+Package: utf8proc
+Version: 2.9.0
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-linux
+Multi-Arch: same
+Abi: c1a0a3d9b2c8b02f8966fbc2640fc55c9f646b082e392343b0279a5a5dbf8a2b
+Description: Clean C library for processing UTF-8 Unicode data.
+Status: install ok installed
+
+Package: libbson
+Version: 1.29.0
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-linux
+Multi-Arch: same
+Abi: 2e6fbf17be5fcb6f36cf21bbc86ca4d92498285d8a2b5a6e288eeb4f113142ed
+Description: libbson is a library providing useful routines related to building, parsing, and iterating BSON documents.
+Status: install ok installed
+
+Package: mongo-c-driver
+Version: 1.29.0
+Depends: libbson, mongo-c-driver, utf8proc, vcpkg-cmake, vcpkg-cmake-config, zlib
+Architecture: x64-linux
+Multi-Arch: same
+Abi: 3b9bf98904c0d7c00e0f7413a96dedd2288b9c45612437070127a66bea310cdb
+Description: Client library written in C for MongoDB.
+Status: install ok installed
+
+Package: mongo-c-driver
+Feature: openssl
+Depends: openssl
+Architecture: x64-linux
+Multi-Arch: same
+Description: Use OpenSSL (even on Windows or Apple systems)
+Status: install ok installed
+
+Package: mongo-cxx-driver
+Version: 3.11.0
+Depends: libbson, mongo-c-driver, vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-linux
+Multi-Arch: same
+Abi: c434fc896603e2b9c216196596cda385a4b823b27b02eb076eaca16ec987edc4
+Description: MongoDB C++ Driver.
+Status: install ok installed
+
+Package: nlohmann-json
+Version: 3.11.3
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-linux
+Multi-Arch: same
+Abi: 096d4a43370d88c224b2cbfaef9daa5c14347dffd19b4a18b4d1295a87cd6014
+Description: JSON for Modern C++
+Status: install ok installed
+

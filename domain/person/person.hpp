@@ -7,7 +7,7 @@
 #include <string>
 #include <bsoncxx/types.hpp>
 #include <regex>
-
+#include <nlohmann/json.hpp>
 #include "person-repository.hpp"
 
 
@@ -25,8 +25,6 @@ public:
            const std::string &mail)
         : name(name), surname(surname), phone(phone), mail(mail) {
     }
-    explicit Person(bsoncxx::document::view view);
-
 
 };
 
